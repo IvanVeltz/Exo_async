@@ -3,18 +3,28 @@ async function callAPI(uri) {
     console.log("-- callAPI - start --");
     console.log("uri - ", uri);
 
-    // fecth(), appel à l'API et réception de la reponse
-    const response = await fetch(uri);
-    console.log("response = ", response);
+    try{
+        // fecth(), appel à l'API et réception de la reponse
+        const response = await fetch(uri);
+        console.log("response = ", response);
 
-    // récupération des données JSON reçues de l'API
-    const data = await response.json();
-    console.log("data = ", data);
+        if (!response.ok){
+            throw new Error(`Erreur API: ${response.status} ${response.statusText}`);
+        }
+        // récupération des données JSON reçues de l'API
+        const data = await response.json();
+        console.log("data = ", data);
 
-    console.log("-- callAPI - end --");
+        console.log("-- callAPI - end --");
 
-    // renvoie des données
-    return data;
+        // renvoie des données
+        return data;
+    } catch (error){
+        console.error("Erreur lors de l'appel API :", error);
+        
+        return null; // Retourne null en cas d'échec
+
+    }
 }
 
 // constante globale : l'URI du endpoint de demande du nouveau deck
@@ -96,7 +106,7 @@ async function actionDraw() {
     console.log("drawCardResponse = ", drawCardResponse);
 
     // Récupération de l'URI de l'image de cette carte dans les données reçues
-    const imgCardUri = drawCardResponse.card[0].image;
+    const imgCardUri = drawCardResponse.cards[0].image;
 
     // ajout de la carte piochée dans la zone des cartes piochées
     addCardToDomByImgUri(imgCardUri);
